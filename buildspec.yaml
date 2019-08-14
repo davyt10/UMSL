@@ -1,0 +1,37 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      java: openjdk11
+    commands:
+      - REPOSITORY_URI=674520542290.dkr.ecr.eu-west-1.amazonaws.com/umsl
+      - java -version
+      - mvn package
+      - docker --version
+      - docker images
+
+
+    commands:
+      - echo $CODEBUILD_SRC_DIR
+      - aws s3 ls # troubleshooting
+      # MAVEN_CONFIG is set to /root/.m2 is CodeBuild Dockerfile which breaks the mvn usage
+      # see https://github.com/apache/maven/blob/master/apache-maven/src/bin/mvn#L188
+      - export MAVEN_CONFIG=''
+      - chmod a+x mvnw
+      - ./mvnw -Pprod clean verify
+      #- java -jar target/*.jar # need to exit this somehow.
+      - ./mvnw verify
+      #- docker-compose -f src/main/docker/sonar.yml up -d
+      #- ./mvnw -Pprod clean verify sonar:sonar
+
+
+      - echo log into ECR
+      - $(aws ecr get-login --no-include-email --region eu-west-1)
+      - echo Building the Docker image...
+      - ./mvnw -Pprod verify jib:dockerBuild
+      - docker images
+      - docker tag umsl:latest 674520542290.dkr.ecr.eu-west-1.amazonaws.com/umsl:latest
+      - docker push 674520542290.dkr.ecr.eu-west-1.amazonaws.com/umsl:latest
+
+
+

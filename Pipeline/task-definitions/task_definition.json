@@ -1,0 +1,26 @@
+[
+  {
+    "image": "674520542290.dkr.ecr.eu-west-1.amazonaws.com/umsl:latest",
+    "portMappings": [
+      {
+        "containerPort": 8081,
+        "hostPort": 8081
+      }
+    ],
+    "essential": true,
+    "name": "usml-app-container",
+    "logConfiguration": {
+                    "logDriver": "awslogs",
+                    "options": {
+                        "awslogs-group": "/ecs/umsl",
+                        "awslogs-region": "eu-west-1",
+                        "awslogs-stream-prefix": "ecs"
+                    }
+                }
+  }
+
+]
+
+
+
+

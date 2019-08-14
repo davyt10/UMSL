@@ -1,0 +1,13 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.7
+    commands:
+      - python --version
+      - chmod a+x Pipeline/Deploy/deploy.py
+      - pip install -r Pipeline/Deploy/requirements.txt
+
+  build:
+    commands:
+     - python Pipeline/Deploy/deploy.py
